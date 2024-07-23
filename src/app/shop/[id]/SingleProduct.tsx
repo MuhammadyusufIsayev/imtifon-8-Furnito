@@ -10,7 +10,9 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 type Product = {
+  _id: string;
   title: string;
+  subtitle: string;
   price: number;
   rating: number;
   description: string;
@@ -22,7 +24,7 @@ const SingleProduct = ({ id }: { id: string }) => {
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
 
-  const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [relatedLoading, setRelatedLoading] = useState(true);
 
   useEffect(() => {
@@ -32,7 +34,7 @@ const SingleProduct = ({ id }: { id: string }) => {
           const response = await fetch(
             `https://ecommerce-backend-fawn-eight.vercel.app/api/products/${id}`
           );
-          const data = await response.json();
+          const data: Product = await response.json();
           setProduct(data);
           setLoading(false);
         } catch (error) {
@@ -51,7 +53,7 @@ const SingleProduct = ({ id }: { id: string }) => {
         const response = await fetch(
           "https://ecommerce-backend-fawn-eight.vercel.app/api/products"
         );
-        const data = await response.json();
+        const data: Product[] = await response.json();
         setRelatedProducts(data.slice(0, 4));
         setRelatedLoading(false);
       } catch (error) {
@@ -65,7 +67,7 @@ const SingleProduct = ({ id }: { id: string }) => {
 
   const handleAddToCart = () => {
     const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-    const isProductInCart = cart.some((item: any) => item._id === product?._id);
+    const isProductInCart = cart.some((item: Product) => item._id === product?._id);
 
     if (isProductInCart) {
       toast.info("Product is already in the cart");
@@ -77,9 +79,9 @@ const SingleProduct = ({ id }: { id: string }) => {
     }
   };
 
-  const addToCart = (product: any) => {
+  const addToCart = (product: Product) => {
     const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-    const isProductInCart = cart.some((item: any) => item._id === product._id);
+    const isProductInCart = cart.some((item: Product) => item._id === product._id);
 
     if (isProductInCart) {
       toast.info("Product is already in the cart");
@@ -262,7 +264,7 @@ const SingleProduct = ({ id }: { id: string }) => {
               <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent border-solid rounded-full animate-spin"></div>
             </div>
           ) : (
-            relatedProducts.map((product: any) => (
+            relatedProducts.map((product: Product) => (
               <Link href={`/shop/${product._id}`} key={product._id}>
                 <div className="relative text-start cursor-pointer h-[450px] w-[300px] rounded-[5px] shadow-lg overflow-hidden">
                   <img
